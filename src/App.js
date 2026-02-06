@@ -14,10 +14,14 @@ export default function App() {
     pageNum: pageNum - 1,
   });
 
-  useGetPokemonData(pokemonList);
-
   const { canDecrement, canIncrement, incPage, decPage, pages, pagesCount } =
-    usePagination({ pageNum, count });
+    usePagination({ pageNum, setPageNum, count });
+
+  const { pokemonMap } = useGetPokemonData(pokemonList);
+
+  if (window) {
+    window.pokemonMap = pokemonMap;
+  }
 
   return (
     <div className="App">
@@ -54,7 +58,8 @@ export default function App() {
       <ol>
         {pokemonList?.map((pok) => {
           const id = idFromPokUrl(pok.url);
-          return <Pokemon key={id} id={id} pokemon={pok} />;
+          const data = pokemonMap.get(id);
+          return <Pokemon key={id} id={id} pokemon={pok} data={data} />;
         })}
       </ol>
       <nav></nav>
@@ -62,10 +67,12 @@ export default function App() {
   );
 }
 
-function Pokemon({ pokemon, id }) {
+function Pokemon({ pokemon, id, data }) {
+  if (id == 1) console.log(data);
   return (
     <li value={id}>
-      <span className="pokemonName">{pokemon.name}</span> ({pokemon.url})
+      <span className="pokemonName">{pokemon.name}</span> ({pokemon.url}){" "}
+      {data && <>- XP: {data.base_experience}</>}
     </li>
   );
 }
