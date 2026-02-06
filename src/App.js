@@ -6,9 +6,9 @@ const PAGE_SIZE = 12;
 const MAX_PAGES_TO_SHOW = 10;
 
 const urls = {
+  // "https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20"
   index: BASE_URL + "pokemon",
 };
-// "https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20"
 const idFromPokUrl = (url) => url.split(urls.index).pop().replaceAll("/", "");
 
 function useGetPokemon({ pageNum }) {
@@ -59,6 +59,7 @@ export default function App() {
     if (canIncrement) setPageNum((p) => p + 1);
   };
 
+  // todo: don't show pages above pageCount
   const pages = Array.from(
     { length: MAX_PAGES_TO_SHOW },
     (_, i) => pageNum + i
