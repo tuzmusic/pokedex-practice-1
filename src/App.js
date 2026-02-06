@@ -68,7 +68,6 @@ export default function App() {
 }
 
 function Pokemon({ pokemon, id, data }) {
-  if (id == 1) console.log(data);
   return (
     <li value={id}>
       <span className="pokemonName">{pokemon.name}</span> ({pokemon.url}){" "}

@@ -9,32 +9,31 @@ export function useGetPokemonData(pokemonList) {
   // todo: make sure pokemonList itself is memoized - or something
   React.useEffect(() => {
     if (!pokemonList) return;
+    let fetched = 0;
 
-    const promises = pokemonList.map(({ name, url }) => {
-      // const id = idFromPokUrl(url);
-      // const cached = cache.get(id);
-      // if (cached) {
-      //   console.log('Used cache for', name)
-      //   return Promise.resolve(cached)
-      // }
+    const promises = pokemonList.map(({ url }) => {
+      const id = idFromPokUrl(url);
+      const cached = cache.current.get(id);
+      if (cached) {
+        return Promise.resolve(cached);
+      }
 
-      return fetch(url).then((res) => res.json());
+      fetched++;
+      return new Promise((res) => setTimeout(() => res(), 500))
+        .then(() => fetch(url))
+        .then((res) => res.json())
+        .then((item) => {
+          cache.current.set(`${item.id}`, item);
+          return Promise.resolve(item);
+        });
     });
+    console.log({ fetched });
 
     // todo: allSettled, so one failure doesn't bork it all
     Promise.all(promises).then((results) => {
-      console.log(results);
       setPokemonData(results);
     });
   }, [pokemonList]);
 
-  const pokemonMap = React.useMemo(() => {
-    console.log("running map...");
-    return pokemonData.reduce((acc, item) => {
-      acc.set(`${item.id}`, item);
-      return acc;
-    }, new Map());
-  }, [pokemonData]);
-
-  return { pokemonData, pokemonMap };
+  return { pokemonData, pokemonMap: cache.current };
 }
