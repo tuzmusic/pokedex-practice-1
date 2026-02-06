@@ -2,6 +2,7 @@ import { idFromPokUrl } from "./urls";
 import React from "react";
 import "./styles.css";
 import { useGetPokemonList } from "./useGetPokemonList";
+import { useGetPokemonData } from "./useGetPokemonData";
 export const PAGE_SIZE = 12;
 export const MAX_PAGES_TO_SHOW = 10;
 
@@ -11,6 +12,8 @@ export default function App() {
   const { results: pokemonList, count } = useGetPokemonList({
     pageNum: pageNum - 1,
   });
+
+  useGetPokemonData(pokemonList);
 
   const pagesCount = Math.ceil(count / PAGE_SIZE);
 
@@ -40,6 +43,7 @@ export default function App() {
         {pages.map((n) => {
           return (
             <a
+              key={n}
               onClick={() => setPageNum(n)}
               style={{
                 // todo: put into css
