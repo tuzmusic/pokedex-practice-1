@@ -3,6 +3,7 @@ import React from "react";
 import "./styles.css";
 import { useGetPokemonList } from "./useGetPokemonList";
 import { useGetPokemonData } from "./useGetPokemonData";
+import { usePagination } from "./usePagination";
 export const PAGE_SIZE = 12;
 export const MAX_PAGES_TO_SHOW = 10;
 
@@ -15,22 +16,8 @@ export default function App() {
 
   useGetPokemonData(pokemonList);
 
-  const pagesCount = Math.ceil(count / PAGE_SIZE);
-
-  const canIncrement = pageNum < pagesCount;
-  const canDecrement = pageNum > 1;
-  const decPage = () => {
-    if (canDecrement) setPageNum((p) => p - 1);
-  };
-  const incPage = () => {
-    if (canIncrement) setPageNum((p) => p + 1);
-  };
-
-  // todo: don't show pages above pageCount
-  const pages = Array.from(
-    { length: MAX_PAGES_TO_SHOW },
-    (_, i) => pageNum + i
-  );
+  const { canDecrement, canIncrement, incPage, decPage, pages, pagesCount } =
+    usePagination({ pageNum, count });
 
   return (
     <div className="App">
