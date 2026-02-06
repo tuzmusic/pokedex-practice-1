@@ -1,50 +1,14 @@
+import { idFromPokUrl } from "./urls";
 import React from "react";
 import "./styles.css";
-
-const BASE_URL = "https://pokeapi.co/api/v2/";
-const PAGE_SIZE = 12;
-const MAX_PAGES_TO_SHOW = 10;
-
-const urls = {
-  // "https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20"
-  index: BASE_URL + "pokemon",
-};
-const idFromPokUrl = (url) => url.split(urls.index).pop().replaceAll("/", "");
-
-function useGetPokemon({ pageNum }) {
-  const [result, setPokemonList] = React.useState([]);
-
-  const cache = React.useRef(new Map());
-
-  React.useEffect(() => {
-    const url = new URL(urls.index);
-    url.searchParams.set("limit", PAGE_SIZE);
-    url.searchParams.set("offset", PAGE_SIZE * pageNum);
-
-    const cached = cache.current.get(pageNum);
-    if (cached) {
-      setPokemonList(cached);
-      console.log("read from cache for page", pageNum);
-      return;
-    }
-
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        debugger;
-        cache.current.set(pageNum, data);
-        setPokemonList(data);
-        console.log("wrote to cache for page", pageNum);
-      });
-  }, [setPokemonList, pageNum]);
-
-  return result;
-}
+import { useGetPokemonList } from "./useGetPokemonList";
+export const PAGE_SIZE = 12;
+export const MAX_PAGES_TO_SHOW = 10;
 
 export default function App() {
   const [pageNum, setPageNum] = React.useState(1);
 
-  const { results: pokemonList, count } = useGetPokemon({
+  const { results: pokemonList, count } = useGetPokemonList({
     pageNum: pageNum - 1,
   });
 
@@ -78,6 +42,7 @@ export default function App() {
             <a
               onClick={() => setPageNum(n)}
               style={{
+                // todo: put into css
                 cursor: "pointer",
                 paddingInline: "4px",
                 borderColor: "grey",
