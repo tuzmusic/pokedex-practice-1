@@ -17,4 +17,6 @@ export function useGetPokemonData(pokemonList) {
       setPokemonData(results);
     });
   }, [pokemonList]);
+
+  return pokemonData;
 }
